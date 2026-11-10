@@ -9,24 +9,25 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+  # 1. Instala o SDK do .NET 10 (necessário para os projetos em .NET 10)
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
-      version: '9.x'
+      version: '10.x'
 
-  # Restaura usando o arquivo .slnx correto
+  # 2. Restaura usando o arquivo .slnx correto
   - script: dotnet restore BeaconSync.slnx
     displayName: 'Restaurar Dependências'
 
-  # Compila a solution .slnx inteira (todas as camadas e testes)
+  # 3. Compila a solution .slnx inteira (todas as camadas e testes)
   - script: dotnet build BeaconSync.slnx --configuration $(buildConfiguration) --no-restore
     displayName: 'Compilar Solution .slnx'
 
-  # Publica especificamente a API
+  # 4. Publica especificamente a API gerando os binários
   - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
     displayName: 'Publicar Projeto API'
 
-  # Faz o Deploy direto no Azure App Service
+  # 5. Faz o Deploy direto no Azure App Service
   - task: AzureWebApp@1
     inputs:
       azureSubscription: 'AzureServiceConnection'
