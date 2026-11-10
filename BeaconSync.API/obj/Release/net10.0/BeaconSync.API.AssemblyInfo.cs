@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BeaconSync.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7c62249982599108551d5625d7670e1775912c05")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bdb7481910c64ecef1424aa6a6334f7838e16b88")]
 [assembly: System.Reflection.AssemblyProductAttribute("BeaconSync.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BeaconSync.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
