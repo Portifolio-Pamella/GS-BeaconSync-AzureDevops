@@ -9,25 +9,21 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  # 1. Instala o SDK do .NET 9
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
       version: '9.x'
 
-  # 2. Restaura as dependências da solution em camadas
-  - script: dotnet restore BeaconSync.sln
+  # Usa **/*.sln para buscar o arquivo automaticamente onde quer que ele esteja
+  - script: dotnet restore "**/*.sln"
     displayName: 'Restaurar Dependências'
 
-  # 3. Compila a solution inteira
-  - script: dotnet build BeaconSync.sln --configuration $(buildConfiguration) --no-restore
+  - script: dotnet build "**/*.sln" --configuration $(buildConfiguration) --no-restore
     displayName: 'Compilar Solution .NET'
 
-  # 4. Publica o projeto da API
-  - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
+  - script: dotnet publish "**/BeaconSync.API.csproj" --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
     displayName: 'Publicar Projeto API'
 
-  # 5. Faz o Deploy direto no Azure App Service
   - task: AzureWebApp@1
     inputs:
       azureSubscription: 'AzureServiceConnection'
