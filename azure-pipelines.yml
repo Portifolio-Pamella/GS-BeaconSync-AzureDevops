@@ -1,5 +1,5 @@
 trigger:
-- main
+  - main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -9,52 +9,52 @@ variables:
   webAppName: 'rm565206-beaconsync-api'
 
 stages:
-- stage: Build
-  displayName: 'Build da Solução em Camadas'
-  jobs:
-  - job: BuildJob
-    displayName: 'Compilar e Publicar a API'
-    steps:
-    # 1. Instala o SDK do .NET 9 no agent do Azure DevOps
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '9.x'
-
-    # 2. Restaura os pacotes NuGet de todas as camadas da Solution
-    - script: dotnet restore BeaconSync.sln
-      displayName: 'Restaurar Dependências'
-
-    # 3. Compila a solution inteira (Domain, Application, Infrastructure e API)
-    - script: dotnet build BeaconSync.sln --configuration $(buildConfiguration) --no-restore
-      displayName: 'Compilar Solution .NET'
-
-    # 4. Publica especificamente o projeto da API gerando os binários otimizados
-    - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
-      displayName: 'Publicar Projeto API'
-
-    # 5. Empacota e disponibiliza o artefato para o estágio de deploy
-    - task: PublishBuildArtifacts@2
-      inputs:
-        pathToPublish: '$(Build.ArtifactStagingDirectory)/drop'
-        artifactName: 'drop'
-        publishLocation: 'Container'
-
-- stage: Deploy
-  displayName: 'Deploy no Azure App Service'
-  dependsOn: Build
-  condition: succeeded()
-  jobs:
-  - deployment: DeployWeb
-    displayName: 'Deploy WebApp'
-    environment: 'production'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          # 6. Envia o pacote compilado para o App Service do Azure
-          - task: AzureWebApp@1
+  - stage: Build
+    displayName: 'Build da Solução em Camadas'
+    jobs:
+      - job: BuildJob
+        displayName: 'Compilar e Publicar a API'
+        steps:
+          # 1. Instala o SDK do .NET 9 no agent do Azure DevOps
+          - task: UseDotNet@2
             inputs:
-              azureSubscription: 'SUA_SERVICE_CONNECTION_AQUI' # Substitua pelo nome exato da conexão criada no Azure DevOps
-              appName: '$(webAppName)'
-              package: '$(Pipeline.Workspace)/drop/**/*.zip'
+              packageType: 'sdk'
+              version: '9.x'
+
+          # 2. Restaura os pacotes NuGet de todas as camadas da Solution
+          - script: dotnet restore BeaconSync.sln
+            displayName: 'Restaurar Dependências'
+
+          # 3. Compila a solution inteira (Domain, Application, Infrastructure e API)
+          - script: dotnet build BeaconSync.sln --configuration $(buildConfiguration) --no-restore
+            displayName: 'Compilar Solution .NET'
+
+          # 4. Publica especificamente o projeto da API gerando os binários otimizados
+          - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
+            displayName: 'Publicar Projeto API'
+
+          # 5. Empacota e disponibiliza o artefato para o estágio de deploy
+          - task: PublishBuildArtifacts@2
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)/drop'
+              artifactName: 'drop'
+              publishLocation: 'Container'
+
+  - stage: Deploy
+    displayName: 'Deploy no Azure App Service'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: DeployWeb
+        displayName: 'Deploy WebApp'
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                # 6. Envia o pacote compilado para o App Service do Azure
+                - task: AzureWebApp@1
+                  inputs:
+                    azureSubscription: 'AzureServiceConnection' # Substitua pelo nome exato da conexão que você criou no Azure DevOps
+                    appName: '$(webAppName)'
+                    package: '$(Pipeline.Workspace)/drop/**/*.zip'
