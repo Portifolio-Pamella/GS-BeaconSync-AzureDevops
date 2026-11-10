@@ -4,6 +4,13 @@ trigger:
       - main
       - master
 
+# Adicionado para atender à validação automática via Pull Request (Requisito 04)
+pr:
+  branches:
+    include:
+      - main
+      - master
+
 pool:
   vmImage: 'ubuntu-latest'
 
