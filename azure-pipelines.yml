@@ -14,16 +14,19 @@ steps:
       packageType: 'sdk'
       version: '9.x'
 
-  # Usa **/*.sln para buscar o arquivo automaticamente onde quer que ele esteja
-  - script: dotnet restore "**/*.sln"
+  # Restaura usando o arquivo .slnx correto
+  - script: dotnet restore BeaconSync.slnx
     displayName: 'Restaurar Dependências'
 
-  - script: dotnet build "**/*.sln" --configuration $(buildConfiguration) --no-restore
-    displayName: 'Compilar Solution .NET'
+  # Compila a solution .slnx inteira (todas as camadas e testes)
+  - script: dotnet build BeaconSync.slnx --configuration $(buildConfiguration) --no-restore
+    displayName: 'Compilar Solution .slnx'
 
-  - script: dotnet publish "**/BeaconSync.API.csproj" --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
+  # Publica especificamente a API
+  - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
     displayName: 'Publicar Projeto API'
 
+  # Faz o Deploy direto no Azure App Service
   - task: AzureWebApp@1
     inputs:
       azureSubscription: 'AzureServiceConnection'
