@@ -1,12 +1,14 @@
 trigger:
   - main
 
+# Aqui vinculamos o grupo de variáveis que criamos no Library do Azure DevOps
+variables:
+  - group: 'New variable group 10-nov' # Ou o nome que você colocou lá
+  - buildConfiguration: 'Release'
+  - webAppName: 'rm565206-beaconsync-api'
+
 pool:
   vmImage: 'ubuntu-latest'
-
-variables:
-  buildConfiguration: 'Release'
-  webAppName: 'rm565206-beaconsync-api'
 
 stages:
   - stage: Build
@@ -21,19 +23,19 @@ stages:
               packageType: 'sdk'
               version: '9.x'
 
-          # 2. Restaura os pacotes NuGet de todas as camadas da Solution
+          # 2. Restaura os pacotes NuGet de todas as camadas
           - script: dotnet restore BeaconSync.sln
             displayName: 'Restaurar Dependências'
 
-          # 3. Compila a solution inteira (Domain, Application, Infrastructure e API)
+          # 3. Compila a solution inteira
           - script: dotnet build BeaconSync.sln --configuration $(buildConfiguration) --no-restore
             displayName: 'Compilar Solution .NET'
 
-          # 4. Publica especificamente o projeto da API gerando os binários otimizados
+          # 4. Publica o projeto da API
           - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
             displayName: 'Publicar Projeto API'
 
-          # 5. Empacota e disponibiliza o artefato para o estágio de deploy
+          # 5. Empacota e disponibiliza o artefato
           - task: PublishBuildArtifacts@2
             inputs:
               pathToPublish: '$(Build.ArtifactStagingDirectory)/drop'
@@ -52,9 +54,10 @@ stages:
           runOnce:
             deploy:
               steps:
-                # 6. Envia o pacote compilado para o App Service do Azure
+                # 6. Envia o pacote compilado para o App Service e injeta as variáveis de configuração
                 - task: AzureWebApp@1
                   inputs:
-                    azureSubscription: 'AzureServiceConnection' # Substitua pelo nome exato da conexão que você criou no Azure DevOps
+                    azureSubscription: 'AzureServiceConnection'
                     appName: '$(webAppName)'
                     package: '$(Pipeline.Workspace)/drop/**/*.zip'
+                    # O App Service lê automaticamente variáveis no formato ConnectionStrings__* como Connection Strings
