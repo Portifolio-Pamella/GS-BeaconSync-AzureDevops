@@ -1,0 +1,84 @@
+{
+  "project": "BeaconSync API - Test Data",
+  "version": "v1",
+  "endpoints": {
+
+    "voluntarios": {
+      "post": {
+        "nome": "Pamella Christiny Chaves Brito",
+        "email": "pamella.christinyy2006@gmail.com",
+        "telefone": "11988887777"
+      },
+      "put": {
+        "id": 1,
+        "nome": "Pamella Christiny Chaves Brito",
+        "email": "pamella.atualizado@beaconsync.com",
+        "telefone": "11999998888"
+      }
+    },
+
+    "pessoasVulneraveis": {
+      "post": {
+        "nome": "João da Silva",
+        "idade": 45,
+        "tipoVulnerabilidade": "Insegurança Alimentar e Habitacional",
+        "necessidadeEspecial": "Mobilidade reduzida",
+        "enderecoId": 1
+      },
+      "put": {
+        "id": 1,
+        "nome": "João da Silva",
+        "idade": 45,
+        "tipoVulnerabilidade": "Insegurança Alimentar",
+        "necessidadeEspecial": "Uso de cadeira de rodas",
+        "enderecoId": 1
+      }
+    },
+
+    "enderecos": {
+      "post": {
+        "logradouro": "Rua Pacobaiba, 100 - Sacomã",
+        "cep": "03285-000",
+        "cidade": "São Paulo",
+        "estado": "SP"
+      },
+      "put": {
+        "id": 1,
+        "logradouro": "Rua Pacobaiba, 150 - Sacomã",
+        "cep": "03285-000",
+        "cidade": "São Paulo",
+        "estado": "SP"
+      }
+    },
+
+    "responsaveis": {
+      "post": {
+        "nome": "Maria Oliveira",
+        "telefone": "11977776666",
+        "email": "maria.responsavel@beaconsync.com"
+      },
+      "put": {
+        "id": 1,
+        "nome": "Maria Oliveira dos Santos",
+        "telefone": "11977776666",
+        "email": "maria.santos@beaconsync.com"
+      }
+    },
+
+    "respostasAlertas": {
+      "post": {
+        "descricao": "Encaminhado kit de alimentos e agasalhos para a família na comunidade.",
+        "status": "Em Andamento",
+        "voluntarioId": 1,
+        "pessoaVulneravelId": 1
+      },
+      "put": {
+        "id": 1,
+        "descricao": "Atendimento concluído com sucesso e suporte prestado.",
+        "status": "Resolvido",
+        "voluntarioId": 1,
+        "pessoaVulneravelId": 1
+      }
+    }
+  }
+}
