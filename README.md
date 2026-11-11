@@ -123,8 +123,4 @@ O projeto cumpre rigorosamente todas as exigências estabelecidas no escopo da d
 
 * **Testes Automáticos no CI:** Execução automática de testes unitários e de integração (xUnit) a cada ciclo de compilação.
 * **Organização dos Scripts:** Centralizados estruturadamente na pasta `/Scripts` (incluindo DDL, automações CLI, imagens de arquitetura e arquivos de teste).
-* **Documentação de API:** Utilização nativa do **Swagger UI**, dispensando arquivos JSON manuais no README.
-
-```
-
----
+* **Documentação de API:** Utilização nativa do **Swagger UI**, com os jsons manuais na pasta C:\Users\pamel\Desktop\GS-BeaconSync-AzureDevops\Scripts\json-teste.
