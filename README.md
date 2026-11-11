@@ -1,10 +1,7 @@
 
-### 📄 Versão Final do `README.md`
-
-```markdown
 # BeaconSync — Global Solution 2026/2 (DevOps Tools & Cloud Computing)
 
-## 📌 Sobre a Equipe e Disciplina
+## Sobre a Equipe e Disciplina
 
 - **Instituição:** FIAP — Faculdade de Informática e Administração Paulista
 - **Turma:** 2TSDPX
@@ -20,7 +17,7 @@
 
 ---
 
-## 🔗 Links de Acesso do Projeto
+## Links de Acesso do Projeto
 
 - **Azure DevOps Organization / Project:** [Acessar Azure DevOps](https://dev.azure.com/RM562005/GS-BeaconSync)
 - **Web App em Produção (Swagger):** [https://rm565206-beaconsync-api.azurewebsites.net/swagger](https://rm565206-beaconsync-api.azurewebsites.net/swagger)
@@ -28,7 +25,7 @@
 
 ---
 
-## 🚀 Resumo do Projeto: BeaconSync
+## Resumo do Projeto: BeaconSync
 
 O **BeaconSync** é uma solução voltada para situações de emergência em desastres climáticos (como enchentes e alagamentos). Em cenários críticos, pessoas vulneráveis (idosos acamados, pessoas com deficiência, bebês e dependentes de suporte médico) correm sérios riscos, muitas vezes ficando isoladas sem que as equipes de resgate saibam sua localização exata.
 
@@ -40,13 +37,13 @@ A plataforma atua organizando o processo em três etapas fundamentais:
 
 ---
 
-## 💻 Stack Tecnológica (.NET)
+## Stack Tecnológica (.NET)
 
 O backend da aplicação foi desenvolvido utilizando o ecossistema **.NET (versão 10)**, estruturado sob os princípios de **Clean Architecture** (separação em camadas: API, Application, Domain, Infrastructure, e Projetos de Testes Unitários e de Integração com xUnit). O uso do .NET garante alta performance, segurança robusta através de autenticação JWT, tratamento de requisições assíncronas e integração nativa com ORMs modernos como o **Entity Framework Core**.
 
 ---
 
-## 🏗️ Desenho da Arquitetura Macro
+## Desenho da Arquitetura Macro
 
 Abaixo está representada a arquitetura macro da solução BeaconSync, ilustrando a integração entre os componentes do sistema, banco de dados e ambiente de nuvem:
 
@@ -70,7 +67,7 @@ A infraestrutura do projeto foi totalmente provisionada de forma automatizada vi
 
 ---
 
-## 📂 Estrutura da Pasta `Scripts` (Entregáveis)
+## Estrutura da Pasta `Scripts` (Entregáveis)
 
 O repositório conta com uma pasta centralizada chamada **`Scripts`** que agrupa todos os artefatos técnicos exigidos pelo escopo do projeto:
 
@@ -88,7 +85,7 @@ Para rodar a aplicação localmente, é necessário configurar as credenciais de
 O arquivo de configuração original localiza-se em:  
 `BeaconSync.API/appsettings.json`
 
-### 🔒 Template do `appsettings.json` (Sem credenciais sensíveis)
+### Template do `appsettings.json` (Sem credenciais sensíveis)
 Para fins de versionamento seguro e boas práticas, o repositório utiliza o seguinte modelo estrutural. Preencha os campos de `ConnectionStrings` e `JwtSettings` com as suas credenciais locais ou de produção para executar o projeto:
 
 ```json
@@ -112,7 +109,7 @@ Para fins de versionamento seguro e boas práticas, o repositório utiliza o seg
 
 ---
 
-## 📋 Atendimento aos Requisitos da Global Solution
+## Atendimento aos Requisitos da Global Solution
 
 O projeto cumpre rigorosamente todas as exigências estabelecidas no escopo da disciplina:
 
