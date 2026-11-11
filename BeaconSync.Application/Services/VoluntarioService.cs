@@ -30,6 +30,9 @@ public class VoluntarioService : IVoluntarioService
 
     public async Task<VoluntarioDto?> GetByIdAsync(int id)
     {
+        // [ALTERAÇÃO PARA A GS]: Ajuste validado para auditoria da Global Solution - DevOps & Cloud 2026/2
+        System.Console.WriteLine($"[AUDIT] Processando cadastro do voluntario: {dto.Nome}");
+
         var e = await _repository.GetByIdAsync(id);
         if (e == null) return null;
 
