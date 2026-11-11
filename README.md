@@ -107,6 +107,15 @@ Para fins de versionamento seguro e boas práticas, o repositório utiliza o seg
 
 ```
 
+Senha e user para autenticação jwt (não da para fazer requisições sem autenticação):
+
+```
+{
+  "email": "admin@beaconsync.com",
+  "senha": "123456"
+}
+```
+
 ---
 
 ## Atendimento aos Requisitos da Global Solution
