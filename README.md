@@ -123,4 +123,151 @@ O projeto cumpre rigorosamente todas as exigências estabelecidas no escopo da d
 
 * **Testes Automáticos no CI:** Execução automática de testes unitários e de integração (xUnit) a cada ciclo de compilação.
 * **Organização dos Scripts:** Centralizados estruturadamente na pasta `/Scripts` (incluindo DDL, automações CLI, imagens de arquitetura e arquivos de teste).
-* **Documentação de API:** Utilização nativa do **Swagger UI**, com os jsons manuais na pasta C:\Users\pamel\Desktop\GS-BeaconSync-AzureDevops\Scripts\json-teste.
+* **Documentação de API:** Utilização nativa do **Swagger UI**, com os jsons manuais de teste disponíveis na pasta `/Scripts/json-teste/` para validação de endpoints, e abaixo:
+
+---
+
+## Exemplos de Contratos CRUD (Payloads JSON)
+
+Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de cadastro (`POST`) e atualização (`PUT`) de todas as entidades expostas pela API do **BeaconSync**.
+
+### 1. Voluntários (`/api/voluntarios`)
+
+* **POST (Criar Voluntário):**
+
+```json
+{
+  "nome": "Pamella Christiny Chaves Brito",
+  "email": "pamella.christinyy2006@gmail.com",
+  "telefone": "11988887777"
+}
+
+```
+
+* **PUT (Atualizar Voluntário):**
+
+```json
+{
+  "id": 1,
+  "nome": "Pamella Christiny Chaves Brito",
+  "email": "pamella.atualizado@beaconsync.com",
+  "telefone": "11999998888"
+}
+
+```
+
+---
+
+### 2. Pessoas Vulneráveis (`/api/pessoavulneravel`)
+
+* **POST (Cadastrar Pessoa Vulnerável):**
+
+```json
+{
+  "nome": "João da Silva",
+  "idade": 45,
+  "tipoVulnerabilidade": "Insegurança Alimentar e Habitacional",
+  "necessidadeEspecial": "Mobilidade reduzida",
+  "enderecoId": 1
+}
+
+```
+
+* **PUT (Atualizar Pessoa Vulnerável):**
+
+```json
+{
+  "id": 1,
+  "nome": "João da Silva",
+  "idade": 45,
+  "tipoVulnerabilidade": "Insegurança Alimentar",
+  "necessidadeEspecial": "Uso de cadeira de rodas",
+  "enderecoId": 1
+}
+
+```
+
+---
+
+### 3. Endereços (`/api/endereco`)
+
+* **POST (Cadastrar Endereço):**
+
+```json
+{
+  "logradouro": "Rua Pacobaiba, 100 - Sacomã",
+  "cep": "03285-000",
+  "cidade": "São Paulo",
+  "estado": "SP"
+}
+
+```
+
+* **PUT (Atualizar Endereço):**
+
+```json
+{
+  "id": 1,
+  "logradouro": "Rua Pacobaiba, 150 - Sacomã",
+  "cep": "03285-000",
+  "cidade": "São Paulo",
+  "estado": "SP"
+}
+
+```
+
+---
+
+### 4. Responsáveis (`/api/responsavel`)
+
+* **POST (Cadastrar Responsável):**
+
+```json
+{
+  "nome": "Maria Oliveira",
+  "telefone": "11977776666",
+  "email": "maria.responsavel@beaconsync.com"
+}
+
+```
+
+* **PUT (Atualizar Responsável):**
+
+```json
+{
+  "id": 1,
+  "nome": "Maria Oliveira dos Santos",
+  "telefone": "11977776666",
+  "email": "maria.santos@beaconsync.com"
+}
+
+```
+
+---
+
+### 5. Respostas a Alertas (`/api/respostaalerta`)
+
+* **POST (Registrar Resposta a Alerta):**
+
+```json
+{
+  "descricao": "Encaminhado kit de alimentos e agasalhos para a família na comunidade.",
+  "status": "Em Andamento",
+  "voluntarioId": 1,
+  "pessoaVulneravelId": 1
+}
+
+```
+
+* **PUT (Atualizar Resposta a Alerta):**
+
+```json
+{
+  "id": 1,
+  "descricao": "Atendimento concluído com sucesso e suporte prestado.",
+  "status": "Resolvido",
+  "voluntarioId": 1,
+  "pessoaVulneravelId": 1
+}
+
+```
