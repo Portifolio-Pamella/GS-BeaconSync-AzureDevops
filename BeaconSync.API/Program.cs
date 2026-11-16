@@ -57,7 +57,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Configuração do Swagger com Suporte a JWT Bearer
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BeaconSync API - Registro de Vulnerabilidades", Version = "v2 - GS 2026" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BeaconSync API - GS", Version = "v1 - 2026" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
