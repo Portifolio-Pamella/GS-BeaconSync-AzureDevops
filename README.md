@@ -1,4 +1,3 @@
-
 # BeaconSync — Global Solution 2026/2 (DevOps Tools & Cloud Computing)
 
 ## Sobre a Equipe e Disciplina
@@ -47,23 +46,16 @@ O backend da aplicação foi desenvolvido utilizando o ecossistema **.NET (vers�
 
 Abaixo está representada a arquitetura macro da solução BeaconSync, ilustrando a integração entre os componentes do sistema, banco de dados e ambiente de nuvem:
 
-![Arquitetura BeaconSync](./Scripts/img-arquitetura/arquitetura%20BeaconSync.png)
+![Arquitetura BeaconSync](./Scripts/img-arquitetura/Arquitetura.png)
 
 ---
 
 ## ☁️ Infraestrutura Provisionada em Nuvem (Azure CLI)
 
-A infraestrutura do projeto foi totalmente provisionada de forma automatizada via scripts em Azure CLI, dividida em dois Grupos de Recursos estratégicos na região do **Canada Central**:
+A infraestrutura de hospedagem da API foi totalmente provisionada de forma automatizada via scripts em Azure CLI, utilizando o Grupo de Recursos exclusivo para o Web App na região do **Canada Central**:
 
-### 1. Grupo de Recursos do Banco de Dados
-- **Nome do Resource Group:** `Beaconsync-Banco-565206`
-- **Servidor SQL:** `rm565206-sql-server` (Banco de Dados PaaS - Azure SQL / SQL Server)
-- **Banco de Dados:** `rm565206-sqldb`
-
-### 2. Grupo de Recursos da Aplicação (Web App)
 - **Nome do Resource Group:** `BeaconSyn-WebApp-565206`
-- **Plano de Serviço:** `rm565206-webapp-plan` (App Service Plan)
-- **Aplicação Web:** `rm565206-beaconsync-api` (Azure App Service rodando .NET em ambiente Linux)
+- **Serviço de Hospedagem:** Azure App Service (`rm565206-beaconsync-api`) integrado com banco de dados Oracle externo (PaaS).
 
 ---
 
@@ -73,17 +65,16 @@ O repositório conta com uma pasta centralizada chamada **`Scripts`** que agrupa
 
 - `Scripts/img-arquitetura/`: Contém a imagem oficial do diagrama macro de arquitetura da solução (`arquitetura BeaconSync.png`).
 - `Scripts/json-teste/`: Armazena payloads e exemplos em formato JSON (`dados_teste_beaconsync.json`) para testes manuais dos endpoints de POST e PUT via Postman ou Swagger.
-- `Scripts/Script-CLI-Infraestrutura/`: Contém o script de automação (`deploy-infra.sh`) responsável pelo provisionamento dos recursos e grupos de recursos na Azure via CLI.
+- `Scripts/Script-CLI-Infraestrutura/`: Contém o script de automação (`deploy-infra.sh`) responsável pelo provisionamento dos recursos do Web App na Azure via CLI.
 - `Scripts/sql-ddl/`: Agrupa os scripts de banco de dados e DDL relacional (`ddl.sql`) utilizados para a estruturação das tabelas e relacionamentos.
 
 ---
 
 ## ⚙️ Configuração de Variáveis de Ambiente (`appsettings.json`)
 
-Para rodar a aplicação localmente, é necessário configurar as credenciais de acesso ao banco de dados e a chave de criptografia do token JWT. 
+Para rodar a aplicação localmente, é necessário configurar as credenciais de acesso ao banco de dados Oracle e a chave de criptografia do token JWT. 
 
-O arquivo de configuração original localiza-se em:  
-`BeaconSync.API/appsettings.json`
+O arquivo de configuração original localiza-se em: `BeaconSync.API/appsettings.json`
 
 ### Template do `appsettings.json` (Sem credenciais sensíveis)
 Para fins de versionamento seguro e boas práticas, o repositório utiliza o seguinte modelo estrutural. Preencha os campos de `ConnectionStrings` e `JwtSettings` com as suas credenciais locais ou de produção para executar o projeto:
@@ -107,13 +98,14 @@ Para fins de versionamento seguro e boas práticas, o repositório utiliza o seg
 
 ```
 
-Senha e user para autenticação jwt (não da para fazer requisições sem autenticação):
+Senha e user para autenticação jwt (necessário para realizar requisições autenticadas):
 
-```
+```json
 {
   "email": "admin@beaconsync.com",
   "senha": "123456"
 }
+
 ```
 
 ---
@@ -122,7 +114,7 @@ Senha e user para autenticação jwt (não da para fazer requisições sem auten
 
 O projeto cumpre rigorosamente todas as exigências estabelecidas no escopo da disciplina:
 
-* **Provisionamento via Azure CLI:** Recursos em nuvem criados por script e utilizados pelo pipeline de CI/CD.
+* **Provisionamento via Azure CLI:** Recursos de hospedagem em nuvem criados por script e utilizados pelo pipeline de CI/CD.
 * **Azure DevOps Integrado:** Repositório privado no Azure Repos, gerenciamento de tarefas no Azure Boards e automação via Azure Pipelines (YAML).
 * **Governança de Branch (Main Protegida):**
 * Exigência de revisor obrigatório com permissão configurada para auto-aprovação simulada.
@@ -132,7 +124,7 @@ O projeto cumpre rigorosamente todas as exigências estabelecidas no escopo da d
 
 * **Testes Automáticos no CI:** Execução automática de testes unitários e de integração (xUnit) a cada ciclo de compilação.
 * **Organização dos Scripts:** Centralizados estruturadamente na pasta `/Scripts` (incluindo DDL, automações CLI, imagens de arquitetura e arquivos de teste).
-* **Documentação de API:** Utilização nativa do **Swagger UI**, com os jsons manuais de teste disponíveis na pasta `/Scripts/json-teste/` para validação de endpoints, e abaixo:
+* **Documentação de API:** Utilização nativa do **Swagger UI**, com os payloads JSON de teste disponíveis na pasta `/Scripts/json-teste/` para validação de endpoints.
 
 ---
 
@@ -278,5 +270,9 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
   "voluntarioId": 1,
   "pessoaVulneravelId": 1
 }
+
+```
+
+```
 
 ```
