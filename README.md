@@ -20,7 +20,7 @@
 
 - **Azure DevOps Organization / Project:** [Acessar Azure DevOps](https://dev.azure.com/RM562005/GS-BeaconSync)
 - **Web App em Produção (Swagger):** [https://rm565206-beaconsync-api.azurewebsites.net/swagger](https://rm565206-beaconsync-api.azurewebsites.net/swagger)
-- **Vídeo de Demonstração (YouTube):** [Assistir no YouTube](https://www.google.com/search?q=%23) *(inserir link)*
+- **Vídeo de Demonstração (YouTube):** [Assistir no YouTube](https://youtu.be/OC3oIu9Hi90?si=sLGxiEPVwX7xrfyH)
 
 ---
 
