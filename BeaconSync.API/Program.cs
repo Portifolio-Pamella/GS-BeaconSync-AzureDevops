@@ -1,13 +1,13 @@
+using System.Text;
+using System.Threading.RateLimiting;
+using BeaconSync.API.Middlewares;
+using BeaconSync.Application.Extensions;
+using BeaconSync.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using BeaconSync.Application.Extensions;
-using BeaconSync.Infrastructure.Extensions;
-using BeaconSync.API.Middlewares;
-using System.Text;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +26,6 @@ builder.Services.AddRateLimiter(options =>
 {
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
         RateLimitPartition.GetFixedWindowLimiter(
-            // Identifica por utilizador logado ou pelo IP remoto
             partitionKey: context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
             factory: _ => new FixedWindowRateLimiterOptions
             {
@@ -113,7 +112,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "BeaconSync API v1");
-    c.RoutePrefix = string.Empty; // Abre o Swagger diretamente na raiz (http://localhost:5006/)
+    c.RoutePrefix = string.Empty; // Abre o Swagger diretamente na raiz
 });
 
 // Mapeamento dos Health Checks
