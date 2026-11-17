@@ -11,12 +11,15 @@ pr:
       - main
       - master
 
+variables:
+  - group: 'vg-beaconsync-vars' # Grupo de variáveis configurado no Library do Azure DevOps
+  - name: buildConfiguration
+    value: 'Release'
+  - name: webAppName
+    value: 'rm565206-beaconsync-api'
+
 pool:
   vmImage: 'ubuntu-latest'
-
-variables:
-  buildConfiguration: 'Release'
-  webAppName: 'rm565206-beaconsync-api'
 
 stages:
   - stage: Build
@@ -28,6 +31,7 @@ stages:
           - task: UseDotNet@2
             displayName: 'Instalar SDK do .NET 10'
             inputs:
+              packageType: 'sdk'
               version: '10.x'
 
           - task: DotNetCoreCLI@2
@@ -82,7 +86,7 @@ stages:
               downloadPath: '$(System.DefaultWorkingDirectory)/drop'
 
           - task: AzureWebApp@1
-            displayName: 'Deploy Web App: rm565206-beaconsync-api'
+            displayName: 'Deploy WebApp: rm565206-beaconsync-api'
             inputs:
               azureSubscription: 'AzureServiceConnection'
               appName: '$(webAppName)'
