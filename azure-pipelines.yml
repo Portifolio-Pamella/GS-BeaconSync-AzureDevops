@@ -1,93 +1,123 @@
+# ==============================================================================
+# PIPELINE DE CI/CD - BEACONSYNC API (.NET 10)
+# Aluna: Pamella Christiny Chaves Brito | RM: 565206
+# ==============================================================================
+
+# Bloco 1: Gatilhos de Integração Contínua (CI)
+# Define quais branches disparam a execução automática do pipeline ao receber um push.
 trigger:
   branches:
     include:
-      - main
-      - master
+      - main     # Dispara o pipeline automaticamente em commits na branch principal (main)
+      - master   # Dispara o pipeline automaticamente em commits na branch master (caso utilizada)
 
-# Adicionado para atender à validação automática via Pull Request (Requisito 04)
+# Bloco 2: Configuração de Pull Requests (PR)
+# Atende à validação automática de código quando um PR é aberto para as branches protegidas.
 pr:
   branches:
     include:
-      - main
-      - master
+      - main     # Executa testes e validações automaticamente em PRs direcionados à main
+      - master   # Executa validações em PRs direcionados à master
 
+# Bloco 3: Variáveis globais e segredos do pipeline
 variables:
-  - group: 'vg-beaconsync-vars' # Grupo de variáveis configurado no Library do Azure DevOps
-  - name: buildConfiguration
-    value: 'Release'
-  - name: webAppName
-    value: 'rm565206-beaconsync-api'
+  - group: 'vg-beaconsync-vars' # Importa um Variable Group seguro configurado na Library do Azure DevOps (contém strings de conexão, chaves, etc.)
+  - name: buildConfiguration   # Declara uma variável para o modo de compilação
+    value: 'Release'           # Define o valor como 'Release' para otimizar o desempenho do .NET 10 em produção
+  - name: webAppName           # Declara uma variável com o identificador do App Service no Azure
+    value: 'rm565206-beaconsync-api' # Nome oficial vinculado ao seu RM (565206)
 
+# Bloco 4: Ambiente de Execução (Agent Pool)
+# Define a máquina virtual gerenciada onde os passos do pipeline serão executados.
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest' # Utiliza a versão mais recente do Ubuntu Linux fornecida pelo Azure DevOps
 
+# Bloco 5: Estágios (Stages) do Pipeline
+# Organiza o fluxo em grandes fases sequenciais: primeiro o Build/Testes, depois o Deploy.
 stages:
+  
+  # --------------------------------------------------------------------------
+  # ESTÁGIO 1: BUILD, TESTES E EMPACOTAMENTO
+  # --------------------------------------------------------------------------
   - stage: Build
-    displayName: 'Estágio de Build e Testes'
+    displayName: 'Estágio de Build e Testes' # Nome amigável exibido no painel do Azure DevOps
     jobs:
       - job: BuildJob
         displayName: 'Compilar e Testar .NET 10'
         steps:
+          
+          # Tarefa 1.1: Instalação do SDK do .NET 10
           - task: UseDotNet@2
             displayName: 'Instalar SDK do .NET 10'
             inputs:
               packageType: 'sdk'
-              version: '10.x'
+              version: '10.x' # Garante que o ambiente do agente possui o .NET 10 instalado para compilar a solução
 
+          # Tarefa 1.2: Restauração de Dependências (NuGet)
           - task: DotNetCoreCLI@2
             displayName: 'Restaurar pacotes NuGet'
             inputs:
               command: 'restore'
-              projects: 'BeaconSync.slnx'
+              projects: 'BeaconSync.slnx' # Arquivo de solução principal da aplicação .NET
 
+          # Tarefa 1.3: Compilação do Projeto (Build)
           - task: DotNetCoreCLI@2
             displayName: 'Compilar projeto (Build)'
             inputs:
               command: 'build'
               projects: 'BeaconSync.slnx'
-              arguments: '--configuration $(buildConfiguration)'
+              arguments: '--configuration $(buildConfiguration)' # Compila utilizando a variável 'Release'
 
+          # Tarefa 1.4: Execução dos Testes Automatizados
           - task: DotNetCoreCLI@2
             displayName: 'Executar Testes'
             inputs:
               command: 'test'
-              projects: '**/*Tests*/*.csproj'
+              projects: '**/*Tests*/*.csproj' # Busca automaticamente qualquer projeto de testes unitários ou de integração
               arguments: '--configuration $(buildConfiguration)'
 
+          # Tarefa 1.5: Publicação da Aplicação
           - task: DotNetCoreCLI@2
             displayName: 'Publicar aplicação'
             inputs:
               command: 'publish'
-              projects: 'BeaconSync.API/BeaconSync.API.csproj'
-              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/app'
-              zipAfterPublish: true
+              projects: 'BeaconSync.API/BeaconSync.API.csproj' # Aponta diretamente para o projeto da API Web
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/app' # Gera os arquivos finais otimizados
+              zipAfterPublish: true # Compacta o resultado diretamente em um arquivo .zip para facilitar o deploy
 
+          # Tarefa 1.6: Armazenamento do Artefato de Build
           - task: PublishBuildArtifacts@1
             displayName: 'Guardar Artifact'
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
-              ArtifactName: 'drop'
-              publishLocation: 'Container'
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/app' # Local de origem do pacote compactado
+              ArtifactName: 'drop' # Nome identificador do artefato gerado ('drop')
+              publishLocation: 'Container' # Salva o artefato no container de armazenamento temporário do Azure DevOps
 
+  # --------------------------------------------------------------------------
+  # ESTÁGIO 2: DEDEPLOY AUTOMATIZADO NA NUVEM
+  # --------------------------------------------------------------------------
   - stage: Deploy
     displayName: 'Estágio de Deploy no Azure'
-    dependsOn: Build
-    condition: succeeded()
+    dependsOn: Build            # Dependência estrita: só inicia se o Estágio de Build finalizar com 100% de sucesso
+    condition: succeeded()      # Condição de execução: garante que não haverá deploy se houver falhas de compilação ou testes
     jobs:
       - job: DeployJob
         displayName: 'Deploy para Azure App Service'
         steps:
+
+          # Tarefa 2.1: Download do Artefato gerado no Estágio anterior
           - task: DownloadBuildArtifacts@0
             displayName: 'Baixar Artifact'
             inputs:
               buildType: 'current'
               downloadType: 'single'
-              artifactName: 'drop'
-              downloadPath: '$(System.DefaultWorkingDirectory)/drop'
+              artifactName: 'drop' # Resgata o artefato 'drop' compactado no estágio de build
+              downloadPath: '$(System.DefaultWorkingDirectory)/drop' # Define o diretório de destino na máquina do agente
 
+          # Tarefa 2.2: Publicação Direta no App Service do Azure
           - task: AzureWebApp@1
             displayName: 'Deploy WebApp: rm565206-beaconsync-api'
             inputs:
-              azureSubscription: 'AzureServiceConnection'
-              appName: '$(webAppName)'
-              package: '$(System.DefaultWorkingDirectory)/drop/**/*.zip'
+              azureSubscription: 'AzureServiceConnection' # Conexão de serviço segura configurada no Azure DevOps com a sua assinatura
+              appName: '$(webAppName)' # Nome do App Service recuperado da variável ('rm565206-beaconsync-api')
+              package: '$(System.DefaultWorkingDirectory)/drop/**/*.zip' # Localiza o arquivo .zip baixado e realiza o deploy contínuo na nuvem

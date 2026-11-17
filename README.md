@@ -139,8 +139,10 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 ```json
 {
   "nome": "Pamella Christiny Chaves Brito",
-  "email": "pamella.christinyy2006@gmail.com",
-  "telefone": "11988887777"
+  "telefone": "11999998888",
+  "email": "pamella.atualizado@beaconsync.com",
+  "especialidade": "Enfermeira",
+  "disponivelParaAjuda": true
 }
 
 ```
@@ -149,10 +151,12 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "id": 1,
-  "nome": "Pamella Christiny Chaves Brito",
+  "id": ,
+  "nome": "Pamella Teste",
+  "telefone": "11999998888",
   "email": "pamella.atualizado@beaconsync.com",
-  "telefone": "11999998888"
+  "especialidade": "Enfermeira",
+  "disponivelParaAjuda": true
 }
 
 ```
@@ -165,11 +169,10 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "nome": "João da Silva",
-  "idade": 45,
-  "tipoVulnerabilidade": "Insegurança Alimentar e Habitacional",
-  "necessidadeEspecial": "Mobilidade reduzida",
-  "enderecoId": 1
+  "nome": "Cecilia Torres",
+  "dataNascimento": "2026-11-17T12:25:42.509Z",
+  "tipoVulnerabilidade": "Deficiente Fisica",
+  "necessidadeEspecial": "Auxilio na Mobilidade"
 }
 
 ```
@@ -178,12 +181,11 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "id": 1,
-  "nome": "João da Silva",
-  "idade": 45,
-  "tipoVulnerabilidade": "Insegurança Alimentar",
-  "necessidadeEspecial": "Uso de cadeira de rodas",
-  "enderecoId": 1
+  "id": ,
+  "nome": "Cecilia Torres",
+  "dataNascimento": "2026-11-17T12:25:42.509Z",
+  "tipoVulnerabilidade": "Deficiente Fisica",
+  "necessidadeEspecial": "Auxilio na Mobilidade"
 }
 
 ```
@@ -196,10 +198,15 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "logradouro": "Rua Pacobaiba, 100 - Sacomã",
-  "cep": "03285-000",
-  "cidade": "São Paulo",
-  "estado": "SP"
+  "pessoaVulneravelId": ,
+  "logradouro": "Rua Da Mina",
+  "numero": "12",
+  "bairro": "Cascavel",
+  "distrito": "Boas Novas",
+  "tipoImovel": "Casa",
+  "temLajeParaHelicoptero": false,
+  "andar": 2,
+  "eEnderecoAtual": true
 }
 
 ```
@@ -208,13 +215,17 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "id": 1,
-  "logradouro": "Rua Pacobaiba, 150 - Sacomã",
-  "cep": "03285-000",
-  "cidade": "São Paulo",
-  "estado": "SP"
+  "id": ,
+  "pessoaVulneravelId": ,
+  "logradouro": "Rua Da Mina Teste",
+  "numero": "12",
+  "bairro": "Cascavel",
+  "distrito": "Boas Novas",
+  "tipoImovel": "Casa",
+  "temLajeParaHelicoptero": false,
+  "andar": 2,
+  "eEnderecoAtual": true
 }
-
 ```
 
 ---
@@ -225,9 +236,11 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "nome": "Maria Oliveira",
-  "telefone": "11977776666",
-  "email": "maria.responsavel@beaconsync.com"
+  "nome": "Nicole Damaris",
+  "telefone": "11995858555",
+  "email": "nicole.damaris@beaconsync.com",
+  "moraComVulneravel": true,
+  "pessoaVulneravelId": 0
 }
 
 ```
@@ -236,10 +249,12 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "id": 1,
-  "nome": "Maria Oliveira dos Santos",
-  "telefone": "11977776666",
-  "email": "maria.santos@beaconsync.com"
+  "id": ,
+  "nome": "Nicole Damaris Teste",
+  "telefone": "11995858555",
+  "email": "nicole.damaris@beaconsync.com",
+  "moraComVulneravel": true,
+  "pessoaVulneravelId": 0
 }
 
 ```
@@ -252,10 +267,11 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "descricao": "Encaminhado kit de alimentos e agasalhos para a família na comunidade.",
-  "status": "Em Andamento",
-  "voluntarioId": 1,
-  "pessoaVulneravelId": 1
+  "pessoaVulneravelId": 0,
+  "enderecoOndeEstaId": 0,
+  "statusSeguranca": "em perigo",
+  "observacao": "Alagamento em andar",
+  "dataResposta": "2026-11-17T12:31:31.241Z"
 }
 
 ```
@@ -264,11 +280,12 @@ Abaixo estão detalhados os exemplos de JSONs utilizados para as operações de 
 
 ```json
 {
-  "id": 1,
-  "descricao": "Atendimento concluído com sucesso e suporte prestado.",
-  "status": "Resolvido",
-  "voluntarioId": 1,
-  "pessoaVulneravelId": 1
+  "id": 0,
+  "pessoaVulneravelId": 0,
+  "enderecoOndeEstaId": 0,
+  "statusSeguranca": "em perigo",
+  "observacao": "Alagamento em andar teste",
+  "dataResposta": "2026-11-17T12:31:31.241Z"
 }
 
 ```
