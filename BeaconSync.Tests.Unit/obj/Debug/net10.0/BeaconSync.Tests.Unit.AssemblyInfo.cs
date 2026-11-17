@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BeaconSync.Tests.Unit")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2cb832cd4e0754da76abc53c9c688bd925443c76")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3036d47d21f769d87c2cc548ce33911e4ac57dd")]
 [assembly: System.Reflection.AssemblyProductAttribute("BeaconSync.Tests.Unit")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BeaconSync.Tests.Unit")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
