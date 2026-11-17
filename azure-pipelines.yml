@@ -1,63 +1,111 @@
+# ==============================================================================
+# PIPELINE DE CI/CD AUTOMATIZADA - GLOBAL SOLUTION (FIAP)
+# Aluna: Pamella Christiny Chaves Brito | RM: 565206
+# ==============================================================================
+
+# Dispara o pipeline automaticamente sempre que houver commits nas branches principais
 trigger:
-  - main
+  branches:
+    include:
+      - main
+      - master
 
-# Aqui vinculamos o grupo de variáveis que criamos no Library do Azure DevOps
-variables:
-  - group: 'New variable group 10-nov' # Ou o nome que você colocou lá
-  - buildConfiguration: 'Release'
-  - webAppName: 'rm565206-beaconsync-api'
+# Dispara também validações automáticas de Pull Request para garantir qualidade antes do merge
+pr:
+  branches:
+    include:
+      - main
+      - master
 
+# Define o agente de execução padrão baseado em Linux (Ubuntu) fornecido pelo Azure DevOps
 pool:
   vmImage: 'ubuntu-latest'
 
+# Variáveis globais reutilizadas ao longo das etapas do pipeline
+variables:
+  buildConfiguration: 'Release'             # Configuração de compilação otimizada para produção
+  webAppName: 'rm565206-beaconsync-api'     # Nome do Web App de destino no Azure
+
 stages:
+  # ============================================================================
+  # ESTÁGIO 1: BUILD, TESTES E GERAÇÃO DE ARTEFATOS (Continuous Integration)
+  # ============================================================================
   - stage: Build
-    displayName: 'Build da Solução em Camadas'
+    displayName: 'Estágio de Build e Testes'
     jobs:
       - job: BuildJob
-        displayName: 'Compilar e Publicar a API'
+        displayName: 'Compilar e Testar .NET 10'
         steps:
-          # 1. Instala o SDK do .NET 9 no agent do Azure DevOps
+          # Instancia a versão exata do SDK do .NET necessária para compilar a solução
           - task: UseDotNet@2
+            displayName: 'Instalar SDK do .NET 10'
             inputs:
-              packageType: 'sdk'
-              version: '9.x'
+              version: '10.x'
 
-          # 2. Restaura os pacotes NuGet de todas as camadas
-          - script: dotnet restore BeaconSync.sln
-            displayName: 'Restaurar Dependências'
-
-          # 3. Compila a solution inteira
-          - script: dotnet build BeaconSync.sln --configuration $(buildConfiguration) --no-restore
-            displayName: 'Compilar Solution .NET'
-
-          # 4. Publica o projeto da API
-          - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
-            displayName: 'Publicar Projeto API'
-
-          # 5. Empacota e disponibiliza o artefato
-          - task: PublishBuildArtifacts@2
+          # Restaura todas as dependências de pacotes NuGet mapeadas na solution
+          - task: DotNetCoreCLI@2
+            displayName: 'Restaurar pacotes NuGet'
             inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)/drop'
-              artifactName: 'drop'
+              command: 'restore'
+              projects: 'BeaconSync.slnx'
+
+          # Compila todo o código-fonte da solution na configuração Release
+          - task: DotNetCoreCLI@2
+            displayName: 'Compilar projeto (Build)'
+            inputs:
+              command: 'build'
+              projects: 'BeaconSync.slnx'
+              arguments: '--configuration $(buildConfiguration)'
+
+          # Executa de forma automatizada os testes unitários/integrados do projeto
+          - task: DotNetCoreCLI@2
+            displayName: 'Executar Testes'
+            inputs:
+              command: 'test'
+              projects: '**/*Tests*/*.csproj'
+              arguments: '--configuration $(buildConfiguration)'
+
+          # Publica a API empacotando os binários otimizados e gerando um arquivo .zip
+          - task: DotNetCoreCLI@2
+            displayName: 'Publicar aplicação'
+            inputs:
+              command: 'publish'
+              projects: 'BeaconSync.API/BeaconSync.API.csproj'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/app'
+              zipAfterPublish: true
+
+          # Disponibiliza o pacote compilado (artefato) para consumo na etapa de deploy
+          - task: PublishBuildArtifacts@1
+            displayName: 'Guardar Artifact'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
+              ArtifactName: 'drop'
               publishLocation: 'Container'
 
+  # ============================================================================
+  # ESTÁGIO 2: DEPLOY AUTOMATIZADO NA NUVEM (Continuous Deployment)
+  # ============================================================================
   - stage: Deploy
-    displayName: 'Deploy no Azure App Service'
-    dependsOn: Build
-    condition: succeeded()
+    displayName: 'Estágio de Deploy no Azure'
+    dependsOn: Build            # Só executa após o estágio de Build concluir com êxito
+    condition: succeeded()      # Garante que o deploy só ocorre se não houver falhas anteriores
     jobs:
-      - deployment: DeployWeb
-        displayName: 'Deploy WebApp'
-        environment: 'production'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                # 6. Envia o pacote compilado para o App Service e injeta as variáveis de configuração
-                - task: AzureWebApp@1
-                  inputs:
-                    azureSubscription: 'AzureServiceConnection'
-                    appName: '$(webAppName)'
-                    package: '$(Pipeline.Workspace)/drop/**/*.zip'
-                    # O App Service lê automaticamente variáveis no formato ConnectionStrings__* como Connection Strings
+      - job: DeployJob
+        displayName: 'Deploy para Azure App Service'
+        steps:
+          # Baixa o pacote (.zip) gerado e armazenado pelo estágio anterior de Build
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Baixar Artifact'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(System.DefaultWorkingDirectory)/drop'
+
+          # Realiza o deploy contínuo do pacote baixado diretamente no App Service do Azure via Service Connection
+          - task: AzureWebApp@1
+            displayName: 'Deploy Web App: rm565206-beaconsync-api'
+            inputs:
+              azureSubscription: 'AzureServiceConnection'
+              appName: '$(webAppName)'
+              package: '$(System.DefaultWorkingDirectory)/drop/**/*.zip'
