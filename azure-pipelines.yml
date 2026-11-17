@@ -1,8 +1,18 @@
 trigger:
-  - main
+  branches:
+    include:
+      - main
+      - master
+
+# Adicionado para atender à validação automática via Pull Request (Requisito 04)
+pr:
+  branches:
+    include:
+      - main
+      - master
 
 variables:
-  - group: 'New variable group 10-nov' # Grupo de variáveis configurado no Library do Azure DevOps
+  - group: 'vg-beaconsync-vars' # Grupo de variáveis configurado no Library do Azure DevOps
   - name: buildConfiguration
     value: 'Release'
   - name: webAppName
@@ -12,49 +22,72 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-- stage: Build
-  displayName: 'Build da Solução em Camadas'
-  jobs:
-  - job: BuildJob
-    displayName: 'Compilar e Publicar a API'
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Instalar SDK do .NET 9'
-      inputs:
-        packageType: 'sdk'
-        version: '9.x'
+  - stage: Build
+    displayName: 'Estágio de Build e Testes'
+    jobs:
+      - job: BuildJob
+        displayName: 'Compilar e Testar .NET 10'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Instalar SDK do .NET 10'
+            inputs:
+              packageType: 'sdk'
+              version: '10.x'
 
-    - script: dotnet restore BeaconSync.sln
-      displayName: 'Restaurar Dependências'
+          - task: DotNetCoreCLI@2
+            displayName: 'Restaurar pacotes NuGet'
+            inputs:
+              command: 'restore'
+              projects: 'BeaconSync.slnx'
 
-    - script: dotnet build BeaconSync.sln --configuration $(buildConfiguration) --no-restore
-      displayName: 'Compilar Solution .NET'
+          - task: DotNetCoreCLI@2
+            displayName: 'Compilar projeto (Build)'
+            inputs:
+              command: 'build'
+              projects: 'BeaconSync.slnx'
+              arguments: '--configuration $(buildConfiguration)'
 
-    - script: dotnet publish BeaconSync.API/BeaconSync.API.csproj --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/drop --no-build
-      displayName: 'Publicar Projeto API'
+          - task: DotNetCoreCLI@2
+            displayName: 'Executar Testes'
+            inputs:
+              command: 'test'
+              projects: '**/*Tests*/*.csproj'
+              arguments: '--configuration $(buildConfiguration)'
 
-    - task: PublishBuildArtifacts@2
-      displayName: 'Empacotar Artefato'
-      inputs:
-        pathToPublish: '$(Build.ArtifactStagingDirectory)/drop'
-        artifactName: 'drop'
-        publishLocation: 'Container'
+          - task: DotNetCoreCLI@2
+            displayName: 'Publicar aplicação'
+            inputs:
+              command: 'publish'
+              projects: 'BeaconSync.API/BeaconSync.API.csproj'
+              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/app'
+              zipAfterPublish: true
 
-- stage: Deploy
-  displayName: 'Deploy no Azure App Service'
-  dependsOn: Build
-  condition: succeeded()
-  jobs:
-  - deployment: DeployWeb
-    displayName: 'Deploy WebApp'
-    environment: 'production'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
+          - task: PublishBuildArtifacts@1
+            displayName: 'Guardar Artifact'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/app'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
+
+  - stage: Deploy
+    displayName: 'Estágio de Deploy no Azure'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: DeployJob
+        displayName: 'Deploy para Azure App Service'
+        steps:
+          - task: DownloadBuildArtifacts@0
+            displayName: 'Baixar Artifact'
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              downloadPath: '$(System.DefaultWorkingDirectory)/drop'
+
           - task: AzureWebApp@1
-            displayName: 'Publicar no Azure App Service'
+            displayName: 'Deploy WebApp: rm565206-beaconsync-api'
             inputs:
               azureSubscription: 'AzureServiceConnection'
               appName: '$(webAppName)'
-              package: '$(Pipeline.Workspace)/drop/**/*.zip'
+              package: '$(System.DefaultWorkingDirectory)/drop/**/*.zip'
